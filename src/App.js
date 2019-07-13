@@ -1,26 +1,29 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {Component} from 'react'
+import GoogleMapReact from 'google-map-react'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import './App.css'
+
+const shibuya = { lat: 35.661971, lng: 139.703795 }
+
+class App extends Component {
+
+  handleApiLoaded = (...mapInfo) => {
+    console.log(mapInfo)
+  }
+
+  render() {
+    return (
+      <div style={{ height: '100vh', width: '100%' }}>
+        <GoogleMapReact
+          bootstrapURLKeys={{ key: 'AIzaSyC4WiMdI2XbkgZuTv11QgZvg8DtFS2vj9U' }}
+          defaultCenter={shibuya}
+          defaultZoom={14}
+          yesIWantToUseGoogleMapApiInternals
+          onGoogleApiLoaded={({ map, maps }) => this.handleApiLoaded(map, maps)}
+        />
+      </div>
+    );
+  }
 }
 
-export default App;
+export default App
