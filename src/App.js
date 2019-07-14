@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import GoogleMapReact from 'google-map-react'
-
 import './App.css'
 
 const shibuya = { lat: 35.661971, lng: 139.703795 }
@@ -69,19 +68,24 @@ class App extends Component {
   render() {
 
     return (
-      <div>
-        {
-          this.state.locations.map(l => (
-            <button
-              key={l.id}
-              onClick = {() => this.showMarker(l)}
-              type='button'
-              style={this.state.locationSelected.id === l.id ? {color: 'red'} : {color: 'blue'}}
-            >
-                {l.name}
-            </button>
-          )
-        )}
+      <div className='wrapper'>
+        <div className='sidebar'>
+          <ul class="list-group">
+            {
+              this.state.locations.map(l => (
+                <li
+                  key={l.id}
+                  className='list-group-item'
+                  onClick = {() => this.showMarker(l)}
+                  type='button'
+                  style={this.state.locationSelected.id === l.id ? {color: 'red'} : {color: 'blue'}}
+                >
+                    {l.name}
+                </li>
+              )
+            )}
+          </ul>
+        </div>
         <div style={{ height: '100vh', width: '100%' }}>
           <GoogleMapReact
             bootstrapURLKeys={{ key: 'AIzaSyC4WiMdI2XbkgZuTv11QgZvg8DtFS2vj9U' }}
