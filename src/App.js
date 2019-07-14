@@ -1,23 +1,12 @@
 import React, {Component} from 'react'
-import {onMapLoaded} from './utils'
+import {onMapLoaded, onPlacesLoaded} from './utils'
 import './App.css'
 
 class App extends Component {
 
   state = {
     locationSelected: {},
-    locations: [
-      {
-        id: '1',
-        name: 'Ōta Memorial Museum of Art',
-        position: { lat: 35.669411, lng: 139.704908 }
-      },
-      {
-        id: '2',
-        name: 'Cat Street',
-        position: { lat: 35.667512, lng: 139.706008}
-      }
-    ]
+    locations: []
   }
 
   showMarker = l => {
@@ -31,9 +20,11 @@ class App extends Component {
 
   componentDidMount () {
     const getMap = onMapLoaded()
-    Promise.all([getMap])
+    const getPlaces = onPlacesLoaded()
+    Promise.all([getMap, getPlaces])
       .then(data => {
         const shibuya = { lat: 35.661971, lng: 139.703795 }
+        const venues = data[1].venues
         this.google = data[0]
         this.map = new this.google.maps.Map(
           document.getElementById('map'),
@@ -42,6 +33,32 @@ class App extends Component {
             zoom: 14
           }
         )
+
+        this.infowindow = new this.google.maps.InfoWindow()
+
+        console.log(venues)
+
+        let markers = []
+
+        venues.forEach(venue => {
+          let marker = new this.google.maps.Marker({
+            position: {lat: venue.location.lat, lng: venue.location.lng},
+            map: this.map
+          })
+
+          marker.addListener('click', () => {
+            this.infowindow.setContent(`
+              <div>
+                <p>${venue.name}</p>
+              </div>
+            `)
+            this.infowindow.open(this.map, marker)
+          })
+
+          markers.push(marker)
+        })
+
+        this.markers = markers
       })
   }
 

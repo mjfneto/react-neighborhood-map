@@ -10,3 +10,9 @@ export function onMapLoaded () {
         document.body.insertAdjacentElement('beforeend', script)
     })
 }
+
+export function onPlacesLoaded () {
+    return fetch('https://api.foursquare.com/v2/venues/search?client_id=O5SPZBP1YE0DP5IRPQD3UUDKQNJIJNIXA0X0VGLI1EPEB1Z0&client_secret=GQ3VSSRGVRGERR2M1P2LKZSNHLJQ30TIPASZM4QMVY5VXVTK&v=20180323&limit=5&ll=35.661971,139.703795&radius=2000&query=museum')
+    .then(response => response.json())
+    .then(json => json.response)
+}
