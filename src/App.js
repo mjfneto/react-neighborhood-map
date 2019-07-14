@@ -1,8 +1,6 @@
 import React, {Component} from 'react'
-import GoogleMapReact from 'google-map-react'
+import {onMapLoaded} from './utils'
 import './App.css'
-
-const shibuya = { lat: 35.661971, lng: 139.703795 }
 
 class App extends Component {
 
@@ -31,46 +29,26 @@ class App extends Component {
     })
   }
 
-  handleApiLoaded = (map, maps) => {
-    this.google = {}
-    this.google.maps = maps
-    this.map = map
-
-    this.markers = []
-
-    this.infowindow = new this.google.maps.InfoWindow({})
-
-    this.infowindow.addListener('closeclick', () => {
-      this.setState({
-        locationSelected: {}
+  componentDidMount () {
+    onMapLoaded()
+      .then(google => {
+        const shibuya = { lat: 35.661971, lng: 139.703795 }
+        this.google = google;
+        this.map = new google.maps.Map(
+          document.getElementById('map'),
+          {
+            center: shibuya,
+            zoom: 14
+          }
+        )
       })
-    })
-
-    for(let i = 0; i < this.state.locations.length; i++) {
-      let marker = new this.google.maps.Marker({
-        position: this.state.locations[i].position,
-        map: this.map,
-        id: this.state.locations[i].id
-      })
-
-      this.markers.push(marker)
-
-      marker.addListener('click', () => {
-        this.infowindow.setContent(this.state.locations[i].name)
-        this.infowindow.open(this.map, marker)
-        this.setState({
-          locationSelected: this.state.locations[i]
-        })
-      })
-    }
   }
 
   render() {
-
     return (
       <div className='wrapper'>
         <div className='sidebar'>
-          <ul class="list-group">
+          <ul className="list-group">
             {
               this.state.locations.map(l => (
                 <li
@@ -86,15 +64,7 @@ class App extends Component {
             )}
           </ul>
         </div>
-        <div style={{ height: '100vh', width: '100%' }}>
-          <GoogleMapReact
-            bootstrapURLKeys={{ key: 'AIzaSyC4WiMdI2XbkgZuTv11QgZvg8DtFS2vj9U' }}
-            defaultCenter={shibuya}
-            defaultZoom={14}
-            yesIWantToUseGoogleMapApiInternals
-            onGoogleApiLoaded={({ map, maps }) => this.handleApiLoaded(map, maps)}
-          />
-        </div>
+        <div id='map' style={{ height: '100vh', width: '100%' }}></div>
       </div>
     );
   }
