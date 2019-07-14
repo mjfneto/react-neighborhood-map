@@ -30,11 +30,12 @@ class App extends Component {
   }
 
   componentDidMount () {
-    onMapLoaded()
-      .then(google => {
+    const getMap = onMapLoaded()
+    Promise.all([getMap])
+      .then(data => {
         const shibuya = { lat: 35.661971, lng: 139.703795 }
-        this.google = google;
-        this.map = new google.maps.Map(
+        this.google = data[0]
+        this.map = new this.google.maps.Map(
           document.getElementById('map'),
           {
             center: shibuya,
