@@ -61,16 +61,16 @@ class App extends Component {
             })
           })
 
-          this.infowindow.addListener('closeclick', () => {
-            this.setState({
-              locationSelected: {}
-            })
-          })
-
           markers.push(marker)
         })
 
         this.markers = markers
+
+        this.infowindow.addListener('closeclick', () => {
+          this.setState({
+            locationSelected: {}
+          })
+        })
 
         this.setState({
           locations: venues
