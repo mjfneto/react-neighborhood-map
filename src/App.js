@@ -11,7 +11,7 @@ class App extends Component {
 
   showMarker = l => {
     const marker = this.markers.filter(m => m.id === l.id)[0]
-    this.infowindow.setContent(l.name)
+    this.infowindow.setContent(marker.infowindowContent)
     this.infowindow.open(this.map, marker)
     this.setState({
       locationSelected: l
@@ -46,19 +46,35 @@ class App extends Component {
             map: this.map
           })
 
+          marker.id = venue.id
+          marker.infowindowContent = `
+            <div>
+              <p>${venue.name}</p>
+            </div>
+          `
+
           marker.addListener('click', () => {
-            this.infowindow.setContent(`
-              <div>
-                <p>${venue.name}</p>
-              </div>
-            `)
+            this.infowindow.setContent(marker.infowindowContent)
             this.infowindow.open(this.map, marker)
+            this.setState({
+              locationSelected: venue
+            })
+          })
+
+          this.infowindow.addListener('closeclick', () => {
+            this.setState({
+              locationSelected: {}
+            })
           })
 
           markers.push(marker)
         })
 
         this.markers = markers
+
+        this.setState({
+          locations: venues
+        })
       })
   }
 
