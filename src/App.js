@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {onMapLoaded, onPlacesLoaded} from './utils'
+import {onMapLoaded, onPlacesLoaded, onPlaceDetailsLoaded} from './utils'
 import './App.css'
 
 class App extends Component {
@@ -19,11 +19,11 @@ class App extends Component {
   }
 
   componentDidMount () {
+    const shibuya = { lat: 35.661971, lng: 139.703795 }
     const getMap = onMapLoaded()
-    const getPlaces = onPlacesLoaded()
+    const getPlaces = onPlacesLoaded(shibuya)
     Promise.all([getMap, getPlaces])
       .then(data => {
-        const shibuya = { lat: 35.661971, lng: 139.703795 }
         const venues = data[1].venues
         this.google = data[0]
         this.map = new this.google.maps.Map(
