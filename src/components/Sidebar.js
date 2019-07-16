@@ -1,11 +1,26 @@
-import React from 'react'
+import React, {Component} from 'react'
 import '../App.css'
 
-const Sidebar = ({
-    selectedLocation,
-    visibleMarkers,
-    showMarker,
-    onInputChange }) => {
+class Sidebar extends Component {
+
+    state = {
+        dropdown: false
+    }
+
+    showDropdown = () => {
+        this.setState(state => ({
+            dropdown: state.dropdown ? false : true
+        }))
+    }
+
+    render() {
+
+        const { dropdown } = this.state
+        const {
+        selectedLocation,
+        visibleMarkers,
+        showMarker,
+        onInputChange } = this.props
 
         return (
             <nav className='sidebar'>
@@ -21,15 +36,18 @@ const Sidebar = ({
                         onChange={(e) => onInputChange(e.target.value)}
                     ></input>
                     <div className="input-group-append">
-                        <button
-                            className="btn btn-info dropdown-toggle"
-                            type="button"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                        >
-                            Filter
-                        </button>
-                        <div className="dropdown-menu">
+                        <div className="btn-group dropright">
+                            <button
+                                className="btn btn-info dropdown-toggle"
+                                type="button"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                                onClick={this.showDropdown}
+                            >
+                                Filter
+                            </button>
+                        </div>
+                        <div className={dropdown ? "dropdown-menu show" : "dropdown-menu"}>
                             <button className="dropdown-item" type='button'>Action</button>
                             <button className="dropdown-item" type='button'>Another action</button>
                             <button className="dropdown-item" type='button'>Something else here</button>
@@ -57,6 +75,7 @@ const Sidebar = ({
                 </div>
             </nav>
         )
+    }
 }
 
 export default Sidebar

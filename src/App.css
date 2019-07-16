@@ -11,6 +11,15 @@
   flex-direction: column;
 }
 
+.sidebar .input-group-append {
+  position: relative;
+}
+
+.sidebar .input-group-append > .dropdown-menu.show {
+  top: 0;
+  left: 100%;
+}
+
 .sidebar {
   min-width: 250px;
   max-width: 250px;
