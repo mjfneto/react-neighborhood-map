@@ -1,4 +1,30 @@
 .wrapper {
   display: flex;
+  height: 100vh;
+  width: 100%;
   align-items: stretch;
+}
+
+.sidebar,
+.sidebar .container {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar {
+  min-width: 250px;
+  max-width: 250px;
+  background: #7386D5;
+  color: #fff;
+  transition: all 0.3s;
+}
+
+.sidebar .container {
+  padding-bottom: 20px;
+}
+
+.sidebar .list-group {
+  height: 100%;
+  overflow: scroll;
+  overflow-x: hidden;
 }

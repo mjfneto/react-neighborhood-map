@@ -8,8 +8,8 @@ const Sidebar = ({
     onInputChange }) => {
 
         return (
-            <div className='sidebar'>
-                <div className='m-3'>
+            <nav className='sidebar'>
+                <div className='p-3'>
                     <h1>Arts & Culture in Shibuya</h1>
                 </div>
                 <div className="mb-4 p-3 input-group">
@@ -22,7 +22,7 @@ const Sidebar = ({
                     ></input>
                     <div className="input-group-append">
                         <button
-                            className="btn btn-outline-info dropdown-toggle"
+                            className="btn btn-info dropdown-toggle"
                             type="button"
                             aria-haspopup="true"
                             aria-expanded="false"
@@ -38,22 +38,24 @@ const Sidebar = ({
                         </div>
                     </div>
                 </div>
-                <ul className="list-group">
-                    {
-                        visibleMarkers.map(vm => (
-                            <li
-                                key={vm.id}
-                                className='list-group-item'
-                                onClick={() => showMarker(vm)}
-                                type='button'
-                                style={selectedLocation.id === vm.id ? { color: 'red' } : { color: 'blue' }}
-                            >
-                                {vm.title}
-                            </li>
-                        )
-                        )}
-                </ul>
-            </div>
+                <div className='container'>
+                    <ul className="list-group">
+                        {
+                            visibleMarkers.map(vm => (
+                                <li
+                                    key={vm.id}
+                                    className='list-group-item'
+                                    onClick={() => showMarker(vm)}
+                                    type='button'
+                                    style={selectedLocation.id === vm.id ? { color: 'red' } : { color: 'blue' }}
+                                >
+                                    {vm.title}
+                                </li>
+                            )
+                            )}
+                    </ul>
+                </div>
+            </nav>
         )
 }
 
