@@ -1,11 +1,13 @@
 import React, {Component} from 'react'
+import Sidebar from './components/Sidebar'
 import {onMapLoaded, onPlacesLoaded, onPlaceDetailsLoaded} from './utils'
 import './App.css'
+
 
 class App extends Component {
 
   state = {
-    locationSelected: {},
+    selectedLocation: {},
     locations: []
   }
 
@@ -14,7 +16,7 @@ class App extends Component {
     this.infowindow.setContent(marker.infowindowContent)
     this.infowindow.open(this.map, marker)
     this.setState({
-      locationSelected: l
+      selectedLocation: l
     })
   }
 
@@ -57,7 +59,7 @@ class App extends Component {
             this.infowindow.setContent(marker.infowindowContent)
             this.infowindow.open(this.map, marker)
             this.setState({
-              locationSelected: venue
+              selectedLocation: venue
             })
           })
 
@@ -68,7 +70,7 @@ class App extends Component {
 
         this.infowindow.addListener('closeclick', () => {
           this.setState({
-            locationSelected: {}
+            selectedLocation: {}
           })
         })
 
@@ -79,25 +81,16 @@ class App extends Component {
   }
 
   render() {
+
+    const { selectedLocation, locations } = this.state
+
     return (
       <div className='wrapper'>
-        <div className='sidebar'>
-          <ul className="list-group">
-            {
-              this.state.locations.map(l => (
-                <li
-                  key={l.id}
-                  className='list-group-item'
-                  onClick = {() => this.showMarker(l)}
-                  type='button'
-                  style={this.state.locationSelected.id === l.id ? {color: 'red'} : {color: 'blue'}}
-                >
-                    {l.name}
-                </li>
-              )
-            )}
-          </ul>
-        </div>
+        <Sidebar
+          selectedLocation={selectedLocation}
+          locations={locations}
+          showMarker={this.showMarker}
+        />
         <div id='map' style={{ height: '100vh', width: '100%' }}></div>
       </div>
     );
