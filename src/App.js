@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
+import _ from 'lodash'
 import Sidebar from './components/Sidebar'
-import {onMapLoaded, onPlacesLoaded, onPlaceDetailsLoaded} from './utils'
+import {filterList, onMapLoaded, onPlacesLoaded, onPlaceDetailsLoaded} from './utils'
 import './App.css'
 
 
@@ -8,7 +9,8 @@ class App extends Component {
 
   state = {
     selectedLocation: {},
-    locations: []
+    locations: [],
+    visibleMarkers: []
   }
 
   showMarker = l => {
@@ -17,6 +19,22 @@ class App extends Component {
     this.infowindow.open(this.map, marker)
     this.setState({
       selectedLocation: l
+    })
+  }
+
+  handleInputChange = query => {
+    let visibleMarkers
+    if (query) {
+      visibleMarkers = filterList(query, this.markers)
+      const invisibleMarkers = _.differenceBy(this.markers, visibleMarkers, 'id')
+      invisibleMarkers.forEach(im => im.setVisible(false))
+    } else {
+      this.markers.forEach(m => m.setVisible(true))
+      visibleMarkers = this.markers
+    }
+
+    this.setState({
+      visibleMarkers
     })
   }
 
@@ -49,6 +67,7 @@ class App extends Component {
           })
 
           marker.id = venue.id
+          marker.title = venue.name
           marker.infowindowContent = `
             <div>
               <p>${venue.name}</p>
@@ -74,22 +93,24 @@ class App extends Component {
           })
         })
 
-        this.setState({
-          locations: venues
-        })
+        this.setState(({
+          locations: venues,
+          visibleMarkers: markers
+        }))
       })
   }
 
   render() {
 
-    const { selectedLocation, locations } = this.state
+    const { selectedLocation, locations, visibleMarkers } = this.state
 
     return (
       <div className='wrapper'>
         <Sidebar
           selectedLocation={selectedLocation}
-          locations={locations}
+          visibleMarkers={visibleMarkers}
           showMarker={this.showMarker}
+          onInputChange={this.handleInputChange}
         />
         <div id='map' style={{ height: '100vh', width: '100%' }}></div>
       </div>
