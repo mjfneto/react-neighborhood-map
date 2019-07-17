@@ -100,9 +100,9 @@ class App extends Component {
   }
 
   componentDidMount () {
-    const shibuya = { lat: 35.661971, lng: 139.703795 }
+    const harlem = { lat: 40.81955, lng: -73.946477  }
     const getMap = onMapLoaded()
-    const getPlaces = onPlacesLoaded(shibuya)
+    const getPlaces = onPlacesLoaded(harlem)
     Promise.all([getMap, getPlaces])
       .then(data => {
         const venues = data[1].venues
@@ -110,7 +110,7 @@ class App extends Component {
         this.map = new this.google.maps.Map(
           document.getElementById('map'),
           {
-            center: shibuya,
+            center: harlem,
             zoom: 14
           }
         )

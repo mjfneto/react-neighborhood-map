@@ -19,7 +19,7 @@ class Navbar extends Component {
     render() {
 
         const { hamburgerMenu } = this.state
-        const { sidebar, toggleSidebar } = this.props
+        const { toggleSidebar } = this.props
 
         return (
             <nav className='navbar navbar-expand-lg navbar-light bg-light'>
@@ -31,7 +31,7 @@ class Navbar extends Component {
                     <span>{hamburgerMenu ? '☰' : 'Toggle Sidebar'}</span>
                 </button>
                 <div className='p-3 nav-header'>
-                    <h1>{sidebar ? 'Arts & Culture in Shibuya' : '渋谷区'}</h1>
+                    <h1>Jazz in Harlem</h1>
                 </div>
             </nav>
         )

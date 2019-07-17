@@ -13,10 +13,11 @@ export function onMapLoaded () {
 }
 
 export function onPlacesLoaded (center) {
-    const limit = '25'
-    const radius = '2000'
-    const query = 'museum'
-    return fetch(`https://api.foursquare.com/v2/venues/search?client_id=O5SPZBP1YE0DP5IRPQD3UUDKQNJIJNIXA0X0VGLI1EPEB1Z0&client_secret=GQ3VSSRGVRGERR2M1P2LKZSNHLJQ30TIPASZM4QMVY5VXVTK&v=20180323&limit=${limit}&ll=${center.lat},${center.lng}&radius=${radius}&query=${query}`)
+    const limit = '50'
+    const query = 'jazz'
+    const sw = { lat: 40.802285, lng: -73.962119 }
+    const ne = { lat: 40.834165, lng: -73.922177 }
+    return fetch(`https://api.foursquare.com/v2/venues/search?client_id=O5SPZBP1YE0DP5IRPQD3UUDKQNJIJNIXA0X0VGLI1EPEB1Z0&client_secret=GQ3VSSRGVRGERR2M1P2LKZSNHLJQ30TIPASZM4QMVY5VXVTK&v=20180323&intent=browse&sw=${sw.lat},${sw.lng}&ne=${ne.lat},${ne.lng}&query=${query}&limit=${limit}`)
         .then(response => response.json())
         .then(json => json.response)
 }

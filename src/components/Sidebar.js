@@ -27,7 +27,7 @@ class Sidebar extends Component {
         return (
             <nav className={sidebar ? 'sidebar show' : 'sidebar'}>
                 <div className='p-3'>
-                    <h1>Arts & Culture in Shibuya</h1>
+                    <h1>Jazz in Harlem</h1>
                 </div>
                 <div className="mb-4 p-3 input-group">
                     <input
