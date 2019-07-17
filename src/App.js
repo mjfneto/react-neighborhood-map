@@ -3,7 +3,7 @@ import _ from 'lodash'
 import removeAccents from 'remove-accents'
 import Sidebar from './components/Sidebar'
 import Navbar from './components/Navbar'
-import {filterList, onMapLoaded, onPlacesLoaded, onPlaceDetailsLoaded} from './utils'
+import {filterList, onMapLoaded, onPlacesLoaded} from './utils'
 import './App.css'
 
 class App extends Component {
@@ -132,6 +132,8 @@ class App extends Component {
         })
 
         let markers = []
+
+        console.log(venues)
 
         venues.forEach(venue => {
           let marker = new this.google.maps.Marker({
