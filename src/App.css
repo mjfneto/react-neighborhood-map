@@ -3,6 +3,9 @@
   height: 100vh;
   width: 100%;
   align-items: stretch;
+  position: fixed;
+  bottom: 0;
+  right: 0;
 }
 
 .sidebar,
@@ -21,11 +24,15 @@
 }
 
 .sidebar {
-  min-width: 250px;
-  max-width: 250px;
+  min-width: 300px;
+  max-width: 300px;
   background: #7386D5;
   color: #fff;
   transition: all 0.3s;
+}
+
+.sidebar.show {
+  margin-left: -300px;
 }
 
 .sidebar .container {
@@ -36,4 +43,63 @@
   height: 100%;
   overflow: scroll;
   overflow-x: hidden;
+}
+
+.content {
+  width: calc(100% - 300px);
+  min-height: 100vh;
+  transition: all 0.3s;
+}
+
+.sidebar.show ~ .content {
+  width: 100vw;
+}
+
+.content > .navbar {
+  height: 10vh;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+}
+
+.content .nav-header {
+  text-align: right;
+}
+
+.content .nav-header h1 {
+  font-size: 1.5rem;
+}
+
+#map {
+  height: 90vh;
+  width: 100%;
+}
+
+@media screen and (max-width: 465px) {
+  .content > .navbar > .btn {
+    text-align: center;
+  }
+
+  .content .nav-header h1 {
+    font-size: 1rem;
+  }
+}
+
+@media screen and (max-width: 360px) {
+  .sidebar {
+    min-width: 240px;
+    max-width: 240px;
+  }
+
+  .sidebar.show {
+    margin-left: -240px;
+  }
+
+  .sidebar ~ .content .nav-header {
+    display: flex;
+  }
+
+  .content {
+    width: calc(100% - 240px);
+  }
 }

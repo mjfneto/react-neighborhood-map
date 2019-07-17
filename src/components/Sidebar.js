@@ -17,13 +17,15 @@ class Sidebar extends Component {
 
         const { dropdown } = this.state
         const {
-        selectedLocation,
-        visibleMarkers,
-        showMarker,
-        onInputChange } = this.props
+            selectedLocation,
+            visibleMarkers,
+            showMarker,
+            onInputChange,
+            sidebar
+        } = this.props
 
         return (
-            <nav className='sidebar'>
+            <nav className={sidebar ? 'sidebar show' : 'sidebar'}>
                 <div className='p-3'>
                     <h1>Arts & Culture in Shibuya</h1>
                 </div>

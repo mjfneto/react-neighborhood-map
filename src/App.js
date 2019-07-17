@@ -2,16 +2,23 @@ import React, {Component} from 'react'
 import _ from 'lodash'
 import removeAccents from 'remove-accents'
 import Sidebar from './components/Sidebar'
+import Navbar from './components/Navbar'
 import {filterList, onMapLoaded, onPlacesLoaded, onPlaceDetailsLoaded} from './utils'
 import './App.css'
-
 
 class App extends Component {
 
   state = {
     selectedLocation: {},
     locations: [],
-    visibleMarkers: []
+    visibleMarkers: [],
+    sidebar: false
+  }
+
+  toggleSidebar = () => {
+    this.setState(state => ({
+      sidebar: state.sidebar ? false : true
+    }))
   }
 
   showMarker = l => {
@@ -124,8 +131,6 @@ class App extends Component {
           })
         })
 
-        console.log(venues)
-
         let markers = []
 
         venues.forEach(venue => {
@@ -165,7 +170,12 @@ class App extends Component {
 
   render() {
 
-    const { selectedLocation, locations, visibleMarkers } = this.state
+    const {
+      selectedLocation,
+      locations,
+      visibleMarkers,
+      sidebar
+    } = this.state
 
     return (
       <div className='wrapper'>
@@ -174,8 +184,14 @@ class App extends Component {
           visibleMarkers={visibleMarkers}
           showMarker={this.showMarker}
           onInputChange={this.handleInputChange}
+          sidebar={sidebar}
         />
-        <div id='map' style={{ height: '100vh', width: '100%' }}></div>
+        <div className="content">
+          <Navbar
+            sidebar={sidebar}
+            toggleSidebar={this.toggleSidebar} />
+          <div id='map'></div>
+        </div>
       </div>
     );
   }
