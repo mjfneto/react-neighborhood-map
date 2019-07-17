@@ -25,7 +25,7 @@ class Sidebar extends Component {
         } = this.props
 
         return (
-            <nav className={sidebar ? 'sidebar show' : 'sidebar'}>
+            <nav className={sidebar ? 'sidebar' : 'sidebar hide'}>
                 <div className='p-3'>
                     <h1>Jazz in Harlem</h1>
                 </div>

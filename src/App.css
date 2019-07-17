@@ -31,7 +31,7 @@
   transition: all 0.3s;
 }
 
-.sidebar.show {
+.sidebar.hide {
   margin-left: -300px;
 }
 
@@ -51,7 +51,7 @@
   transition: all 0.3s;
 }
 
-.sidebar.show ~ .content {
+.sidebar.hide ~ .content {
   width: 100vw;
 }
 
@@ -85,21 +85,33 @@
   }
 }
 
-@media screen and (max-width: 360px) {
+@media screen and (max-width: 490px) {
   .sidebar {
     min-width: 240px;
     max-width: 240px;
   }
 
-  .sidebar.show {
+  .sidebar.hide {
     margin-left: -240px;
   }
 
   .sidebar ~ .content .nav-header {
+    display: none;
+  }
+
+  .sidebar.hide ~ .content .nav-header {
     display: flex;
   }
 
   .content {
     width: calc(100% - 240px);
+  }
+
+  .sidebar ~ .content > .navbar {
+    justify-content: center;
+  }
+
+  .sidebar.hide ~ .content > .navbar {
+    justify-content: space-between;
   }
 }

@@ -12,7 +12,7 @@ class App extends Component {
     selectedLocation: {},
     locations: [],
     visibleMarkers: [],
-    sidebar: false
+    sidebar: true
   }
 
   toggleSidebar = () => {
