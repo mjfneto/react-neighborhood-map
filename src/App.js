@@ -9,8 +9,8 @@ import './App.css'
 class App extends Component {
 
   state = {
+    harlem: { lat: 40.81955, lng: -73.946477 },
     selectedLocation: {},
-    locations: [],
     visibleMarkers: [],
     sidebar: true
   }
@@ -21,16 +21,7 @@ class App extends Component {
     }))
   }
 
-  showMarker = l => {
-
-    const { selectedLocation } = this.state
-
-    const marker = this.markers.filter(m => m.id === l.id)[0]
-    this.distinguishById(l.id !== selectedLocation.id ? marker : false)
-    this.setState({
-      selectedLocation: l.id !== selectedLocation.id ? l : {}
-    })
-  }
+  showMarker = (marker) => this.google.maps.event.trigger(marker, 'click')
 
   handleInputChange = query => {
 
@@ -72,37 +63,42 @@ class App extends Component {
   }
 
   distinguishById = (marker) => {
-
-    const { selectedLocation } = this.state;
-
-    (marker && (() => {
+    if (marker) {
       this.markers.forEach(em => {
         (em.id !== marker.id && (() => {
           em.setOpacity(0.4)
-          em.setAnimation(null)
-        })())
+        })())})
 
-        marker.setVisible(true)
-        marker.setOpacity(1.0)
-        marker.setZIndex(1000);
-        (marker.id !== selectedLocation.id && marker.setAnimation(this.google.maps.Animation.BOUNCE))
-        setTimeout(() => { marker.setAnimation(null) }, 500)
+      marker.setVisible(true)
+      marker.setOpacity(1.0)
+      marker.setZIndex(1000)
+      const position = marker.getPosition()
+      this.map.panTo(position)
+
+      setTimeout(() => {
+        this.infowindow.setContent(marker.infowindowContent)
+        this.infowindow.open(this.map, marker)
+      }, 500)
+
+      this.setState({
+        selectedLocation: marker
       })
-
-      this.infowindow.setContent(marker.infowindowContent)
-      this.infowindow.open(this.map, marker)
-    })());
-
-    (!marker && this.markers.forEach(m => {
-      m.setOpacity(1.0)
+    } else {
       this.infowindow.close()
-    }))
+      this.map.setZoom(14);
+      this.markers.forEach(m => {
+        m.setOpacity(1.0)
+      })
+      this.map.panTo(this.state.harlem)
+      this.setState({
+        selectedLocation: {}
+      })
+    }
   }
 
   componentDidMount () {
-    const harlem = { lat: 40.81955, lng: -73.946477  }
     const getMap = onMapLoaded()
-    const getPlaces = onPlacesLoaded(harlem)
+    const getPlaces = onPlacesLoaded(this.state.harlem)
     Promise.all([getMap, getPlaces])
       .then(data => {
         const venues = data[1].venues
@@ -110,25 +106,18 @@ class App extends Component {
         this.map = new this.google.maps.Map(
           document.getElementById('map'),
           {
-            center: harlem,
+            center: this.state.harlem,
             zoom: 14
           }
         )
 
         this.map.addListener('click', () => {
-          this.distinguishById(false)
-          this.infowindow.close()
-          this.setState({
-            selectedLocation: {}
-          })
+          (this.map.getZoom() === 16 && this.distinguishById(false))
         })
 
         this.infowindow = new this.google.maps.InfoWindow()
         this.infowindow.addListener('closeclick', () => {
           this.distinguishById(false)
-          this.setState({
-            selectedLocation: {}
-          })
         })
 
         let markers = []
@@ -152,10 +141,8 @@ class App extends Component {
           `
 
           marker.addListener('click', () => {
-            this.distinguishById(marker)
-            this.setState({
-              selectedLocation: venue
-            })
+            (this.map.getZoom() === 14 && this.map.setZoom(16));
+            marker.id === this.state.selectedLocation.id ? this.distinguishById(false) : this.distinguishById(marker)
           })
 
           markers.push(marker)
@@ -164,7 +151,6 @@ class App extends Component {
         this.markers = markers
 
         this.setState(({
-          locations: venues,
           visibleMarkers: markers
         }))
       })
@@ -174,7 +160,6 @@ class App extends Component {
 
     const {
       selectedLocation,
-      locations,
       visibleMarkers,
       sidebar
     } = this.state

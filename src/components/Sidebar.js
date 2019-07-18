@@ -29,7 +29,7 @@ class Sidebar extends Component {
                 <div className='p-3'>
                     <h1>Jazz in Harlem</h1>
                 </div>
-                <div className="mb-4 p-3 input-group">
+                <div className="p-3 input-group">
                     <input
                         type="text"
                         className="form-control"
@@ -67,7 +67,7 @@ class Sidebar extends Component {
                                     className='list-group-item'
                                     onClick={() => showMarker(vm)}
                                     type='button'
-                                    style={selectedLocation.id === vm.id ? { color: 'red' } : { color: 'blue' }}
+                                    style={vm.id === selectedLocation.id ? { color: 'red'} : { color: 'blue' }}
                                 >
                                     {vm.title}
                                 </li>
