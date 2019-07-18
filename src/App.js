@@ -102,8 +102,8 @@ class App extends Component {
     const getPlaces = onPlacesLoaded(this.state.centralPark)
     Promise.all([getMap, getPlaces])
       .then(data => {
-        const venues = data[1].venues
         this.google = data[0]
+        const venues = data[1].venues
         this.map = new this.google.maps.Map(
           document.getElementById('map'),
           {
@@ -123,6 +123,8 @@ class App extends Component {
         })
 
         let markers = []
+
+        console.log(venues)
 
         venues.forEach(venue => {
           let marker = new this.google.maps.Marker({

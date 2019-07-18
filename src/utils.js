@@ -12,12 +12,13 @@ export function onMapLoaded () {
     })
 }
 
-export function onPlacesLoaded () {
+export function onPlacesLoaded ({lat,lng}) {
     const limit = '100'
-    const query = 'museum+monument'
-    const sw = { lat: 40.768169, lng: -73.981409 }
-    const ne = { lat: 40.796597, lng: -73.949515 }
-    return fetch(`https://api.foursquare.com/v2/venues/search?client_id=O5SPZBP1YE0DP5IRPQD3UUDKQNJIJNIXA0X0VGLI1EPEB1Z0&client_secret=GQ3VSSRGVRGERR2M1P2LKZSNHLJQ30TIPASZM4QMVY5VXVTK&v=20180323&intent=browse&sw=${sw.lat},${sw.lng}&ne=${ne.lat},${ne.lng}&query=${query}&limit=${limit}`)
+    const radius = '2100'
+    const sw = { lat: 40.767971, lng: -73.995777 }
+    const ne = { lat: 40.795842, lng: -73.929343 }
+    const foursquare = `https://api.foursquare.com/v2/venues/search?client_id=O5SPZBP1YE0DP5IRPQD3UUDKQNJIJNIXA0X0VGLI1EPEB1Z0&client_secret=GQ3VSSRGVRGERR2M1P2LKZSNHLJQ30TIPASZM4QMVY5VXVTK&v=20180323&intent=checkin&ll=${lat},${lng}&categoryId=4bf58dd8d48988d181941735,4bf58dd8d48988d1e5931735,4bf58dd8d48988d1e2931735&radius=${radius}&limit=${limit}`
+    return fetch(foursquare)
         .then(response => response.json())
         .then(json => json.response)
 }
