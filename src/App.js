@@ -97,6 +97,14 @@ class App extends Component {
     }
   }
 
+  joinCategories = (venue) => {
+    const joined = []
+    venue.categories.forEach(c => {
+      joined.push(c.name)
+    })
+    return joined.join(', ')
+  }
+
   componentDidMount () {
     const getMap = onMapLoaded()
     const getPlaces = onPlacesLoaded(this.state.centralPark)
@@ -135,22 +143,15 @@ class App extends Component {
             animation: this.google.maps.Animation.DROP
           })
 
-          const joinedCategories = (venue) => {
-            const joined = []
-            venue.categories.forEach(c => {
-              joined.push(c.name)
-            })
-            return joined.join(', ')
-          }
-
           marker.id = venue.id
+          marker.categories = this.joinCategories(venue)
           marker.infowindowContent = {
             success: `
               <div class="card" style="width: 18rem;">
-                <img src="${onStaticPanoLoaded(venue.location)}" class="card-img-top" alt="${venue.name}">
+                <img src="${onStaticPanoLoaded(venue.location)}" class="card-img-top" alt="${marker.title}">
                 <div class="card-body">
-                  <h5 class="card-title">${venue.name}</h5>
-                  <p class="card-text">${joinedCategories(venue)}</p>
+                  <h5 class="card-title">${marker.title}</h5>
+                  <p class="card-text">${marker.categories}</p>
                   <a href="#" class="btn btn-primary">Info</a>
                 </div>
               </div>
