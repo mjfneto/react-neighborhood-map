@@ -25,7 +25,7 @@ class Navbar extends Component {
             <nav className='navbar navbar-expand-lg navbar-light bg-light'>
                 <button
                     type='button'
-                    className={hamburgerMenu ? 'btn btn-info btn-lg': 'btn btn-info'}
+                    className={hamburgerMenu ? 'btn bg-contrast btn-info btn-lg': 'btn bg-contrast btn-info'}
                     onClick={() => toggleSidebar()}
                 >
                     <span>{hamburgerMenu ? '☰' : 'Toggle Sidebar'}</span>

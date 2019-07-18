@@ -8,6 +8,14 @@
   right: 0;
 }
 
+.bg-contrast {
+  background-color: #0C5E69;
+}
+
+.bg-contrast:hover {
+  background-color: #073940
+}
+
 .sidebar,
 .sidebar .container {
   display: flex;

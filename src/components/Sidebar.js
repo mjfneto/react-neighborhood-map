@@ -40,7 +40,7 @@ class Sidebar extends Component {
                     <div className="input-group-append">
                         <div className="btn-group dropright">
                             <button
-                                className="btn btn-info dropdown-toggle"
+                                className="bg-contrast btn btn-info dropdown-toggle"
                                 type="button"
                                 aria-haspopup="true"
                                 aria-expanded="false"
