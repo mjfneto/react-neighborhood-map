@@ -3,6 +3,7 @@ import _ from 'lodash'
 import removeAccents from 'remove-accents'
 import Sidebar from './components/Sidebar'
 import Navbar from './components/Navbar'
+import ErrorNotification from './components/ErrorNotification'
 import {filterList, onMapLoaded, onPlacesLoaded, onStaticPanoLoaded} from './utils'
 import './App.css'
 
@@ -12,7 +13,8 @@ class App extends Component {
     centralPark: { lat: 40.782493, lng: -73.965424},
     selectedLocation: {},
     visibleMarkers: [],
-    sidebar: true
+    sidebar: true,
+    error: false
   }
 
   toggleSidebar = () => {
@@ -107,19 +109,25 @@ class App extends Component {
   componentDidMount () {
     const getMap = onMapLoaded()
     const getPlaces = onPlacesLoaded(this.state.centralPark)
-    Promise.all([getMap, getPlaces])
+    Promise.all([getMap, getPlaces].map(p => p.catch(() => undefined)))
       .then(data => {
         this.google = data[0]
-        const venues = data[1].venues
         this.map = new this.google.maps.Map(
           document.getElementById('map'),
           {
             center: this.state.centralPark,
-            zoom: 14,
-            streetViewControl: false
+            zoom: 14
           }
         )
 
+        if (!data[1]) {
+          this.setState({
+            error: true
+          })
+          return
+        }
+
+          const venues = data[1].venues
         this.map.addListener('click', () => {
           (this.map.getZoom() === 16 && this.distinguishById(false))
         })
@@ -133,7 +141,7 @@ class App extends Component {
 
         venues.forEach(venue => {
           let marker = new this.google.maps.Marker({
-            position: {lat: venue.location.lat, lng: venue.location.lng},
+            position: { lat: venue.location.lat, lng: venue.location.lng },
             map: this.map,
             title: venue.name,
             opacity: 1.0,
@@ -144,15 +152,15 @@ class App extends Component {
           marker.categories = this.joinCategories(venue)
           marker.infowindowContent = {
             success: `
-              <div class="card" style="width: 18rem;">
-                <img src="${onStaticPanoLoaded(venue.location)}" class="card-img-top" alt="${marker.title}">
-                <div class="card-body">
-                  <h5 class="card-title">${marker.title}</h5>
-                  <p class="card-text">${marker.categories}</p>
-                  <a href="#" class="btn btn-primary">Info</a>
-                </div>
+            <div class="card" style="width: 18rem;">
+              <img src="${onStaticPanoLoaded(venue.location)}" class="card-img-top" alt="${marker.title}">
+              <div class="card-body">
+                <h5 class="card-title">${marker.title}</h5>
+                <p class="card-text">${marker.categories}</p>
+                <a href="#" class="btn btn-primary">Info</a>
               </div>
-            `,
+            </div>
+          `,
             failure: '<div><p>' + venue.name + '</p><div>No panorama available</div></div>'
           }
 
@@ -167,7 +175,8 @@ class App extends Component {
         this.markers = markers
 
         this.setState(({
-          visibleMarkers: markers
+          visibleMarkers: markers,
+          error: false
         }))
       })
   }
@@ -177,24 +186,28 @@ class App extends Component {
     const {
       selectedLocation,
       visibleMarkers,
-      sidebar
+      sidebar,
+      error
     } = this.state
 
     return (
-      <div className='wrapper'>
-        <Sidebar
-          selectedLocation={selectedLocation}
-          visibleMarkers={visibleMarkers}
-          showMarker={this.showMarker}
-          onInputChange={this.handleInputChange}
-          sidebar={sidebar}
-        />
-        <div className="content">
-          <Navbar
+      <div>
+        <div className='wrapper'>
+          <Sidebar
+            selectedLocation={selectedLocation}
+            visibleMarkers={visibleMarkers}
+            showMarker={this.showMarker}
+            onInputChange={this.handleInputChange}
             sidebar={sidebar}
-            toggleSidebar={this.toggleSidebar} />
-          <div id='map' title='Cultural places in Central Park area'></div>
+          />
+          <div className="content">
+            <Navbar
+              sidebar={sidebar}
+              toggleSidebar={this.toggleSidebar} />
+            <div id='map' title='Cultural places in Central Park area'></div>
+          </div>
         </div>
+        {(error && <ErrorNotification />)}
       </div>
     );
   }
