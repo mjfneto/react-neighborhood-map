@@ -1,5 +1,5 @@
 export function onMapLoaded () {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
         window.handleMapPromise = function () {
             resolve(window.google)
             delete window.handleMapPromise
@@ -8,6 +8,7 @@ export function onMapLoaded () {
         const src = `https://maps.googleapis.com/maps/api/js?key=&callback=handleMapPromise`
         const script = document.createElement('script')
         script.src = src
+        script.onerror = e => reject(e)
         document.body.insertAdjacentElement('beforeend', script)
     })
 }

@@ -111,6 +111,13 @@ class App extends Component {
     const getPlaces = onPlacesLoaded(this.state.centralPark)
     Promise.all([getMap, getPlaces].map(p => p.catch(() => undefined)))
       .then(data => {
+        if (!data[0]) {
+          this.setState({
+            error: true
+          })
+          return
+        }
+
         this.google = data[0]
         this.map = new this.google.maps.Map(
           document.getElementById('map'),
