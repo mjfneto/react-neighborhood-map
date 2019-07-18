@@ -12,7 +12,7 @@ class App extends Component {
     centralPark: { lat: 40.782493, lng: -73.965424},
     selectedLocation: {},
     visibleMarkers: [],
-    sidebar: false
+    sidebar: true
   }
 
   toggleSidebar = () => {
@@ -193,7 +193,7 @@ class App extends Component {
           <Navbar
             sidebar={sidebar}
             toggleSidebar={this.toggleSidebar} />
-          <div id='map'></div>
+          <div id='map' title='Cultural places in Central Park area'></div>
         </div>
       </div>
     );
