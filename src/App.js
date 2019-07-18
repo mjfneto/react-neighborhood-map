@@ -9,7 +9,6 @@ import './App.css'
 class App extends Component {
 
   state = {
-    harlem: { lat: 40.81955, lng: -73.946477 },
     centralPark: { lat: 40.782493, lng: -73.965424},
     selectedLocation: {},
     visibleMarkers: [],
@@ -131,8 +130,6 @@ class App extends Component {
         })
 
         let markers = []
-
-        console.log(venues)
 
         venues.forEach(venue => {
           let marker = new this.google.maps.Marker({

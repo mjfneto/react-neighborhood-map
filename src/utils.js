@@ -15,17 +15,15 @@ export function onMapLoaded () {
 export function onPlacesLoaded ({lat,lng}) {
     const limit = '100'
     const radius = '2100'
-    const sw = { lat: 40.767971, lng: -73.995777 }
-    const ne = { lat: 40.795842, lng: -73.929343 }
     const foursquare = `https://api.foursquare.com/v2/venues/search?client_id=O5SPZBP1YE0DP5IRPQD3UUDKQNJIJNIXA0X0VGLI1EPEB1Z0&client_secret=GQ3VSSRGVRGERR2M1P2LKZSNHLJQ30TIPASZM4QMVY5VXVTK&v=20180323&intent=checkin&ll=${lat},${lng}&categoryId=4bf58dd8d48988d181941735,4bf58dd8d48988d1e5931735,4bf58dd8d48988d1e2931735&radius=${radius}&limit=${limit}`
     return fetch(foursquare)
         .then(response => response.json())
         .then(json => json.response)
 }
 
-export function onStaticPanoLoaded ({ lat, lng }) {
+export function onStaticPanoLoaded ({lat, lng}) {
     const key = 'AIzaSyC4WiMdI2XbkgZuTv11QgZvg8DtFS2vj9U'
-    return `https://maps.googleapis.com/maps/api/streetview?size=400x240&location=${lat},${lng}&fov=90&heading=235&pitch=10&key=${key}`
+    return `https://maps.googleapis.com/maps/api/streetview?size=400x240&location=${lat},${lng}&key=${key}`
 }
 
 /**
