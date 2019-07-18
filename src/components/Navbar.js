@@ -31,7 +31,7 @@ class Navbar extends Component {
                     <span>{hamburgerMenu ? '☰' : 'Toggle Sidebar'}</span>
                 </button>
                 <div className='p-3 nav-header'>
-                    <h1>Jazz in Harlem</h1>
+                    <h1>Arts & Culture near Central Park</h1>
                 </div>
             </nav>
         )

@@ -75,6 +75,17 @@
   width: 100%;
 }
 
+
+@media screen and (max-width: 646px) {
+  .sidebar ~ .content .nav-header {
+    display: none;
+  }
+
+  .sidebar.hide ~ .content .nav-header {
+    display: flex;
+  }
+}
+
 @media screen and (max-width: 465px) {
   .content > .navbar > .btn {
     text-align: center;

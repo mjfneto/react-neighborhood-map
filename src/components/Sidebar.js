@@ -27,7 +27,7 @@ class Sidebar extends Component {
         return (
             <nav className={sidebar ? 'sidebar' : 'sidebar hide'}>
                 <div className='p-3'>
-                    <h1>Jazz in Harlem</h1>
+                    <h1>Arts & Culture near Central Park</h1>
                 </div>
                 <div className="p-3 input-group">
                     <input

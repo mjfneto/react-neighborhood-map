@@ -5,21 +5,26 @@ export function onMapLoaded () {
             delete window.handleMapPromise
         }
         const key = 'AIzaSyC4WiMdI2XbkgZuTv11QgZvg8DtFS2vj9U'
-        const src = `https://maps.googleapis.com/maps/api/js?key=&libraries=places&callback=handleMapPromise`
+        const src = `https://maps.googleapis.com/maps/api/js?key=${key}&callback=handleMapPromise`
         const script = document.createElement('script')
         script.src = src
         document.body.insertAdjacentElement('beforeend', script)
     })
 }
 
-export function onPlacesLoaded (center) {
-    const limit = '50'
-    const query = 'jazz'
-    const sw = { lat: 40.802285, lng: -73.962119 }
-    const ne = { lat: 40.834165, lng: -73.922177 }
+export function onPlacesLoaded () {
+    const limit = '100'
+    const query = 'museum+zoo'
+    const sw = { lat: 40.768169, lng: -73.981409 }
+    const ne = { lat: 40.796597, lng: -73.949515 }
     return fetch(`https://api.foursquare.com/v2/venues/search?client_id=O5SPZBP1YE0DP5IRPQD3UUDKQNJIJNIXA0X0VGLI1EPEB1Z0&client_secret=GQ3VSSRGVRGERR2M1P2LKZSNHLJQ30TIPASZM4QMVY5VXVTK&v=20180323&intent=browse&sw=${sw.lat},${sw.lng}&ne=${ne.lat},${ne.lng}&query=${query}&limit=${limit}`)
         .then(response => response.json())
         .then(json => json.response)
+}
+
+export function onStaticPanoLoaded ({ lat, lng }) {
+    const key = 'AIzaSyC4WiMdI2XbkgZuTv11QgZvg8DtFS2vj9U'
+    return `https://maps.googleapis.com/maps/api/streetview?size=400x240&location=${lat},${lng}&fov=90&heading=235&pitch=10&key=${key}`
 }
 
 /**

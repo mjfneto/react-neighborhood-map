@@ -3,13 +3,14 @@ import _ from 'lodash'
 import removeAccents from 'remove-accents'
 import Sidebar from './components/Sidebar'
 import Navbar from './components/Navbar'
-import {filterList, onMapLoaded, onPlacesLoaded} from './utils'
+import {filterList, onMapLoaded, onPlacesLoaded, onStaticPanoLoaded} from './utils'
 import './App.css'
 
 class App extends Component {
 
   state = {
     harlem: { lat: 40.81955, lng: -73.946477 },
+    centralPark: { lat: 40.782493, lng: -73.965424},
     selectedLocation: {},
     visibleMarkers: [],
     sidebar: true
@@ -76,7 +77,7 @@ class App extends Component {
       this.map.panTo(position)
 
       setTimeout(() => {
-        this.infowindow.setContent(marker.infowindowContent)
+        this.infowindow.setContent(marker.infowindowContent.success)
         this.infowindow.open(this.map, marker)
       }, 500)
 
@@ -89,7 +90,7 @@ class App extends Component {
       this.markers.forEach(m => {
         m.setOpacity(1.0)
       })
-      this.map.panTo(this.state.harlem)
+      this.map.panTo(this.state.centralPark)
       this.setState({
         selectedLocation: {}
       })
@@ -98,7 +99,7 @@ class App extends Component {
 
   componentDidMount () {
     const getMap = onMapLoaded()
-    const getPlaces = onPlacesLoaded(this.state.harlem)
+    const getPlaces = onPlacesLoaded(this.state.centralPark)
     Promise.all([getMap, getPlaces])
       .then(data => {
         const venues = data[1].venues
@@ -106,8 +107,9 @@ class App extends Component {
         this.map = new this.google.maps.Map(
           document.getElementById('map'),
           {
-            center: this.state.harlem,
-            zoom: 14
+            center: this.state.centralPark,
+            zoom: 14,
+            streetViewControl: false
           }
         )
 
@@ -128,17 +130,33 @@ class App extends Component {
           let marker = new this.google.maps.Marker({
             position: {lat: venue.location.lat, lng: venue.location.lng},
             map: this.map,
+            title: venue.name,
             opacity: 1.0,
             animation: this.google.maps.Animation.DROP
           })
 
+          const joinedCategories = (venue) => {
+            const joined = []
+            venue.categories.forEach(c => {
+              joined.push(c.name)
+            })
+            return joined.join(', ')
+          }
+
           marker.id = venue.id
-          marker.title = venue.name
-          marker.infowindowContent = `
-            <div>
-              <p>${venue.name}</p>
-            </div>
-          `
+          marker.infowindowContent = {
+            success: `
+              <div class="card" style="width: 18rem;">
+                <img src="${onStaticPanoLoaded(venue.location)}" class="card-img-top" alt="${venue.name}">
+                <div class="card-body">
+                  <h5 class="card-title">${venue.name}</h5>
+                  <p class="card-text">${joinedCategories(venue)}</p>
+                  <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+              </div>
+            `,
+            failure: '<div><p>' + venue.name + '</p><div>No panorama available</div></div>'
+          }
 
           marker.addListener('click', () => {
             (this.map.getZoom() === 14 && this.map.setZoom(16));
