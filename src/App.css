@@ -84,15 +84,13 @@
   .sidebar.hide ~ .content .nav-header {
     display: flex;
   }
-}
 
-@media screen and (max-width: 465px) {
-  .content > .navbar > .btn {
-    text-align: center;
+  .sidebar ~ .content > .navbar {
+    justify-content: center;
   }
 
-  .content .nav-header h1 {
-    font-size: 1rem;
+  .sidebar.hide ~ .content > .navbar {
+    justify-content: space-between;
   }
 }
 
@@ -117,12 +115,14 @@
   .content {
     width: calc(100% - 240px);
   }
+}
 
-  .sidebar ~ .content > .navbar {
-    justify-content: center;
+@media screen and (max-width: 465px) {
+  .content > .navbar > .btn {
+    text-align: center;
   }
 
-  .sidebar.hide ~ .content > .navbar {
-    justify-content: space-between;
+  .content .nav-header h1 {
+    font-size: 1rem;
   }
 }

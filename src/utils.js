@@ -14,7 +14,7 @@ export function onMapLoaded () {
 
 export function onPlacesLoaded () {
     const limit = '100'
-    const query = 'museum+zoo'
+    const query = 'museum+monument'
     const sw = { lat: 40.768169, lng: -73.981409 }
     const ne = { lat: 40.796597, lng: -73.949515 }
     return fetch(`https://api.foursquare.com/v2/venues/search?client_id=O5SPZBP1YE0DP5IRPQD3UUDKQNJIJNIXA0X0VGLI1EPEB1Z0&client_secret=GQ3VSSRGVRGERR2M1P2LKZSNHLJQ30TIPASZM4QMVY5VXVTK&v=20180323&intent=browse&sw=${sw.lat},${sw.lng}&ne=${ne.lat},${ne.lng}&query=${query}&limit=${limit}`)

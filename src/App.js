@@ -13,7 +13,7 @@ class App extends Component {
     centralPark: { lat: 40.782493, lng: -73.965424},
     selectedLocation: {},
     visibleMarkers: [],
-    sidebar: true
+    sidebar: false
   }
 
   toggleSidebar = () => {
@@ -124,8 +124,6 @@ class App extends Component {
 
         let markers = []
 
-        console.log(venues)
-
         venues.forEach(venue => {
           let marker = new this.google.maps.Marker({
             position: {lat: venue.location.lat, lng: venue.location.lng},
@@ -151,7 +149,7 @@ class App extends Component {
                 <div class="card-body">
                   <h5 class="card-title">${venue.name}</h5>
                   <p class="card-text">${joinedCategories(venue)}</p>
-                  <a href="#" class="btn btn-primary">Go somewhere</a>
+                  <a href="#" class="btn btn-primary">Info</a>
                 </div>
               </div>
             `,
