@@ -3,6 +3,7 @@ import _ from 'lodash'
 import removeAccents from 'remove-accents'
 import Sidebar from './components/Sidebar'
 import Navbar from './components/Navbar'
+import VenuesList from './components/VenuesList'
 import ErrorNotification from './components/ErrorNotification'
 import {filterList, onMapLoaded, onPlacesLoaded, onStaticPanoLoaded} from './utils'
 import './App.css'
@@ -13,8 +14,12 @@ class App extends Component {
     centralPark: { lat: 40.782493, lng: -73.965424},
     selectedLocation: {},
     visibleMarkers: [],
+    venues: [],
     sidebar: true,
-    error: false
+    error: {
+      value: false,
+      source: ''
+    }
   }
 
   toggleSidebar = () => {
@@ -111,80 +116,116 @@ class App extends Component {
     const getPlaces = onPlacesLoaded(this.state.centralPark)
     Promise.all([getMap, getPlaces].map(p => p.catch(() => undefined)))
       .then(data => {
-        if (!data[0]) {
+        if (!data[0] && !data[1]) {
           this.setState({
-            error: true
+            error: {
+              value: true,
+              source: 'all'
+            }
           })
-          return
         }
 
-        this.google = data[0]
-        this.map = new this.google.maps.Map(
-          document.getElementById('map'),
-          {
-            center: this.state.centralPark,
-            zoom: 14
-          }
-        )
+        if (data[0] && !data[1]) {
+          this.google = data[0]
+          this.map = new this.google.maps.Map(
+            document.getElementById('map'),
+            {
+              center: this.state.centralPark,
+              zoom: 14
+            }
+          )
 
-        if (!data[1]) {
-          this.setState({
-            error: true
+          this.map.addListener('click', () => {
+            (this.map.getZoom() === 16 && this.distinguishById(false))
           })
-          return
+
+          this.infowindow = new this.google.maps.InfoWindow()
+          this.infowindow.addListener('closeclick', () => {
+            this.distinguishById(false)
+          })
+
+          this.setState({
+            error: {
+              value: true,
+              source: 'places'
+            }
+          })
         }
 
+        if (!data[0] && data[1]) {
+          this.setState({
+            venues: data[1].venues,
+            error: {
+              value: true,
+              source: 'map'
+            }
+          })
+        }
+
+        if (data[0] && data[1]) {
           const venues = data[1].venues
-        this.map.addListener('click', () => {
-          (this.map.getZoom() === 16 && this.distinguishById(false))
-        })
+          this.google = data[0]
+          this.map = new this.google.maps.Map(
+            document.getElementById('map'),
+            {
+              center: this.state.centralPark,
+              zoom: 14
+            }
+          )
 
-        this.infowindow = new this.google.maps.InfoWindow()
-        this.infowindow.addListener('closeclick', () => {
-          this.distinguishById(false)
-        })
-
-        let markers = []
-
-        venues.forEach(venue => {
-          let marker = new this.google.maps.Marker({
-            position: { lat: venue.location.lat, lng: venue.location.lng },
-            map: this.map,
-            title: venue.name,
-            opacity: 1.0,
-            animation: this.google.maps.Animation.DROP
+          this.map.addListener('click', () => {
+            (this.map.getZoom() === 16 && this.distinguishById(false))
           })
 
-          marker.id = venue.id
-          marker.categories = this.joinCategories(venue)
-          marker.infowindowContent = {
-            success: `
-            <div class="card" style="width: 18rem;">
-              <img src="${onStaticPanoLoaded(venue.location)}" class="card-img-top" alt="${marker.title}">
-              <div class="card-body">
-                <h5 class="card-title">${marker.title}</h5>
-                <p class="card-text">${marker.categories}</p>
-                <a href="#" class="btn btn-primary">Info</a>
+          this.infowindow = new this.google.maps.InfoWindow()
+          this.infowindow.addListener('closeclick', () => {
+            this.distinguishById(false)
+          })
+
+          let markers = []
+
+          venues.forEach(venue => {
+            let marker = new this.google.maps.Marker({
+              position: { lat: venue.location.lat, lng: venue.location.lng },
+              map: this.map,
+              title: venue.name,
+              opacity: 1.0,
+              animation: this.google.maps.Animation.DROP
+            })
+
+            marker.id = venue.id
+            marker.categories = this.joinCategories(venue)
+            marker.infowindowContent = {
+              success: `
+              <div class="card" style="width: 18rem;">
+                <img src="${onStaticPanoLoaded(venue.location)}" class="card-img-top" alt="${marker.title}">
+                <div class="card-body">
+                  <h5 class="card-title">${marker.title}</h5>
+                  <p class="card-text">${marker.categories}</p>
+                  <a href="#" class="btn btn-primary">Info</a>
+                </div>
               </div>
-            </div>
-          `,
-            failure: '<div><p>' + venue.name + '</p><div>No panorama available</div></div>'
-          }
+            `
+            }
 
-          marker.addListener('click', () => {
-            (this.map.getZoom() === 14 && this.map.setZoom(16));
-            marker.id === this.state.selectedLocation.id ? this.distinguishById(false) : this.distinguishById(marker)
+            marker.addListener('click', () => {
+              (this.map.getZoom() === 14 && this.map.setZoom(16));
+              marker.id === this.state.selectedLocation.id ? this.distinguishById(false) : this.distinguishById(marker)
+            })
+
+            markers.push(marker)
           })
 
-          markers.push(marker)
-        })
+          this.markers = markers
 
-        this.markers = markers
-
-        this.setState(({
-          visibleMarkers: markers,
-          error: false
-        }))
+          this.setState(({
+            visibleMarkers: markers,
+            error: {
+              value: false,
+              source: ''
+            }
+          }))
+        }
       })
   }
 
@@ -193,6 +234,7 @@ class App extends Component {
     const {
       selectedLocation,
       visibleMarkers,
+      venues,
       sidebar,
       error
     } = this.state
@@ -211,10 +253,13 @@ class App extends Component {
             <Navbar
               sidebar={sidebar}
               toggleSidebar={this.toggleSidebar} />
-            <div id='map' title='Cultural places in Central Park area'></div>
+            <div id={!error.value ? 'map' : 'venues-list'} title='Cultural places in Central Park area'>
+              {(error.source === 'map' &&
+                <VenuesList venues={venues} joinCategories={this.joinCategories} />)}
+            </div>
           </div>
         </div>
-        {(error && <ErrorNotification />)}
+        {(error.value && <ErrorNotification source={error.source} />)}
       </div>
     );
   }

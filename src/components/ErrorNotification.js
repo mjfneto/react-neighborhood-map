@@ -1,7 +1,7 @@
 import React from 'react'
 import '../App'
 
-const ErrorModal = props => {
+const ErrorNotification = ({ source }) => {
     return (
         <div
             className="alert alert-dark border-0"
@@ -19,7 +19,7 @@ const ErrorModal = props => {
                 backgroundColor: '#3337'
             }}
         >
-            Could not load the locations
+            Could not load the {(source === 'all' ? 'locations nor the the map' : (source === 'map' ? 'map' : 'locations'))}
             <button
                 className="btn btn-link"
                 type='button'
@@ -32,4 +32,4 @@ const ErrorModal = props => {
     )
 }
 
-export default ErrorModal
+export default ErrorNotification
