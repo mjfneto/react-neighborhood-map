@@ -116,16 +116,11 @@ class App extends Component {
     const getPlaces = onPlacesLoaded(this.state.centralPark)
     Promise.all([getMap, getPlaces].map(p => p.catch(() => undefined)))
       .then(data => {
-        if (!data[0] && !data[1]) {
-          this.setState({
-            error: {
-              value: true,
-              source: 'all'
-            }
-          })
+        if (data[1] && !localStorage.getItem('venues')) {
+          localStorage.setItem('venues', JSON.stringify(data[1].venues))
         }
 
-        if (data[0] && !data[1]) {
+        if (data[0]) {
           this.google = data[0]
           this.map = new this.google.maps.Map(
             document.getElementById('map'),
@@ -144,87 +139,76 @@ class App extends Component {
             this.distinguishById(false)
           })
 
-          this.setState({
-            error: {
-              value: true,
-              source: 'places'
-            }
-          })
-        }
+          if (localStorage.getItem('venues')) {
+            const venues = JSON.parse(localStorage.getItem('venues'))
+            let markers = []
 
-        if (!data[0] && data[1]) {
-          this.setState({
-            venues: data[1].venues,
-            error: {
-              value: true,
-              source: 'map'
-            }
-          })
-        }
+            venues.forEach(venue => {
+              let marker = new this.google.maps.Marker({
+                position: { lat: venue.location.lat, lng: venue.location.lng },
+                map: this.map,
+                title: venue.name,
+                opacity: 1.0,
+                animation: this.google.maps.Animation.DROP
+              })
 
-        if (data[0] && data[1]) {
-          const venues = data[1].venues
-          this.google = data[0]
-          this.map = new this.google.maps.Map(
-            document.getElementById('map'),
-            {
-              center: this.state.centralPark,
-              zoom: 14
-            }
-          )
-
-          this.map.addListener('click', () => {
-            (this.map.getZoom() === 16 && this.distinguishById(false))
-          })
-
-          this.infowindow = new this.google.maps.InfoWindow()
-          this.infowindow.addListener('closeclick', () => {
-            this.distinguishById(false)
-          })
-
-          let markers = []
-
-          venues.forEach(venue => {
-            let marker = new this.google.maps.Marker({
-              position: { lat: venue.location.lat, lng: venue.location.lng },
-              map: this.map,
-              title: venue.name,
-              opacity: 1.0,
-              animation: this.google.maps.Animation.DROP
-            })
-
-            marker.id = venue.id
-            marker.categories = this.joinCategories(venue)
-            marker.infowindowContent = {
-              success: `
-              <div class="card" style="width: 18rem;">
-                <img src="${onStaticPanoLoaded(venue.location)}" class="card-img-top" alt="${marker.title}">
-                <div class="card-body">
-                  <h5 class="card-title">${marker.title}</h5>
-                  <p class="card-text">${marker.categories}</p>
-                  <a href="#" class="btn btn-primary">Info</a>
-                </div>
+              marker.id = venue.id
+              marker.categories = this.joinCategories(venue)
+              marker.infowindowContent = {
+                success: `
+            <div class="card" style="width: 18rem;">
+              <img src="${onStaticPanoLoaded(venue.location)}" class="card-img-top" alt="${marker.title}">
+              <div class="card-body">
+                <h5 class="card-title">${marker.title}</h5>
+                <p class="card-text">${marker.categories}</p>
+                <a href="#" class="btn btn-primary">Info</a>
               </div>
-            `
-            }
+            </div>
+          `
+              }
 
-            marker.addListener('click', () => {
-              (this.map.getZoom() === 14 && this.map.setZoom(16));
-              marker.id === this.state.selectedLocation.id ? this.distinguishById(false) : this.distinguishById(marker)
+              marker.addListener('click', () => {
+                (this.map.getZoom() === 14 && this.map.setZoom(16));
+                marker.id === this.state.selectedLocation.id ? this.distinguishById(false) : this.distinguishById(marker)
+              })
+
+              markers.push(marker)
             })
 
-            markers.push(marker)
-          })
+            this.markers = markers
 
-          this.markers = markers
-
-          this.setState(({
-            visibleMarkers: markers,
-            error: {
-              value: false,
-              source: ''
-            }
-          }))
+            this.setState(({
+              visibleMarkers: markers,
+              error: {
+                value: false,
+                source: ''
+              }
+            }))
+          } else {
+            this.setState({
+              error: {
+                value: true,
+                source: 'places'
+              }
+            })
+          }
+        } else {
+          if (localStorage.getItem('venues')) {
+            this.setState({
+              venues: JSON.parse(localStorage.getItem('venues')),
+              error: {
+                value: true,
+                source: 'map'
+              }
+            })
+          } else {
+            this.setState({
+              error: {
+                value: true,
+                source: 'all'
+              }
+            })
+          }
         }
       })
   }
