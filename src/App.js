@@ -43,7 +43,7 @@ class App extends Component {
       const invisibleMarkers = _.differenceBy(this.markers, visibleMarkers, 'id')
 
       visibleMarkers.forEach(vm => {
-        (vm.id === selectedLocation.id && this.distinguishById(vm))
+        (vm.id === selectedLocation.id && this.distinguishById(false))
         vm.setVisible(true)
         vm.setAnimation(this.google.maps.Animation.BOUNCE)
         setTimeout(() => {vm.setAnimation(null)}, 500)
@@ -54,7 +54,7 @@ class App extends Component {
     } else {
       this.markers.forEach(m => {
         if (m.id === selectedLocation.id) {
-          this.distinguishById(m)
+          this.distinguishById(false)
           return
         }
         m.setVisible(true)
@@ -237,7 +237,7 @@ class App extends Component {
             <Navbar
               sidebar={sidebar}
               toggleSidebar={this.toggleSidebar} />
-            <div id={!error.value ? 'map' : 'venues-list'} title='Cultural places in Central Park area'>
+            <div tabIndex={!error.value ? '-1' : '0'} id={!error.value ? 'map' : 'venues-list'} title='Cultural places in Central Park area'>
               {(error.source === 'map' &&
                 <VenuesList venues={venues} joinCategories={this.joinCategories} />)}
             </div>

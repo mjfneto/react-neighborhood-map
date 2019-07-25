@@ -1,21 +1,56 @@
 import React, {Component} from 'react'
+import ListItem from './ListItem'
 import '../App.css'
 
 class Sidebar extends Component {
 
     state = {
-        dropdown: false
+        focusOnList: false,
+        listFocusIndex: 0
     }
 
-    showDropdown = () => {
+    searchInput = React.createRef()
+    listItem = React.createRef()
+
+    handleFocusOnList = focusOnList => {
+        this.setState({
+            focusOnList
+        })
+    }
+
+    increaseListFocusIndex = () => {
         this.setState(state => ({
-            dropdown: state.dropdown ? false : true
+            listFocusIndex: state.listFocusIndex + 1
         }))
     }
 
-    render() {
+    decreaseListFocusIndex = () => {
+        this.setState(state => ({
+            listFocusIndex: state.listFocusIndex - 1
+        }))
+    }
 
-        const { dropdown } = this.state
+    componentDidMount() {
+        this.searchInput.current.focus()
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+
+        const { focusOnList, listFocusIndex } = this.state
+
+        if (focusOnList === true || prevState.listFocusIndex !== listFocusIndex) {
+            this.listItem.current.focus()
+        } else {
+            this.searchInput.current.focus()
+        }
+    }
+
+    render() {
+        const {
+            listFocusIndex,
+            focusOnList
+        } = this.state
+
         const {
             selectedLocation,
             visibleMarkers,
@@ -30,47 +65,52 @@ class Sidebar extends Component {
                     <h1>Arts & Culture near Central Park</h1>
                 </div>
                 <div className="p-3 input-group">
+                    <label
+                        className='w-100'
+                        htmlFor='search-locations'
+                    >
+                        Type in a location's name:
+                    </label>
                     <input
+                        id='search-locations'
                         type="text"
                         className="form-control"
                         placeholder='Search...'
                         aria-label="Text input with dropdown button"
                         onChange={(e) => onInputChange(e.target.value)}
+                        ref={this.searchInput}
                     ></input>
-                    <div className="input-group-append">
-                        <div className="btn-group dropright">
-                            <button
-                                className="bg-contrast btn btn-info dropdown-toggle"
-                                type="button"
-                                aria-haspopup="true"
-                                aria-expanded="false"
-                                onClick={this.showDropdown}
-                            >
-                                Filter
-                            </button>
-                        </div>
-                        <div className={dropdown ? "dropdown-menu show" : "dropdown-menu"}>
-                            <button className="dropdown-item" type='button'>Action</button>
-                            <button className="dropdown-item" type='button'>Another action</button>
-                            <button className="dropdown-item" type='button'>Something else here</button>
-                            <div role="separator" className="dropdown-divider"></div>
-                            <button className="dropdown-item" type='button'>Separated link</button>
-                        </div>
-                    </div>
                 </div>
                 <div className='container'>
-                    <ul className="list-group">
+                    <span id='locations-label'>Locations:</span>
+                    <ul
+                        aria-labelledby='locations-label'
+                        className="list-group"
+                        role='listbox'
+                        tabIndex={0}
+                        onFocus={e => {
+                            e.preventDefault()
+                            if (focusOnList === false) {
+                                this.handleFocusOnList(true)
+                            }
+                        }}
+                    >
                         {
-                            visibleMarkers.map(vm => (
-                                <li
+                            visibleMarkers.map((vm, index) => (
+                                <ListItem
                                     key={vm.id}
-                                    className='list-group-item'
-                                    onClick={() => showMarker(vm)}
-                                    type='button'
-                                    style={vm.id === selectedLocation.id ? { color: 'red'} : { color: 'blue' }}
-                                >
-                                    {vm.title}
-                                </li>
+                                    vm={vm}
+                                    visibleMarkers={visibleMarkers}
+                                    index={index}
+                                    focusOnList={focusOnList}
+                                    listFocusIndex={listFocusIndex}
+                                    onFocusOnList={this.handleFocusOnList}
+                                    increase={this.increaseListFocusIndex}
+                                    decrease={this.decreaseListFocusIndex}
+                                    selectedLocation={selectedLocation}
+                                    listItemRef={this.listItem}
+                                    showMarker={showMarker}
+                                />
                             )
                             )}
                     </ul>

@@ -5,7 +5,7 @@ export function onMapLoaded () {
             delete window.handleMapPromise
         }
         const key = 'AIzaSyC4WiMdI2XbkgZuTv11QgZvg8DtFS2vj9U'
-        const src = `https://maps.googleapis.com/maps/api/js?key=&callback=handleMapPromise`
+        const src = `https://maps.googleapiscom/maps/api/js?key=&callback=handleMapPromise`
         const script = document.createElement('script')
         script.src = src
         script.onerror = e => reject(e)
